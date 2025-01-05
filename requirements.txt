@@ -1,0 +1,14 @@
+streamlit
+PyPDF2
+google-generativeai
+python-pptx
+PyYAML
+pymongo[srv]
+Pillow
+PyMuPDF
+gridfs
+pandas
+scikit-learn
+pdfplumber
+
+# 一鍵安裝：pip install -r requirements.txt
