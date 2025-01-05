@@ -515,7 +515,7 @@ def main():
     st.markdown('<p class="sub-title">Upload your PDF and images to get comprehensive insights</p>', unsafe_allow_html=True)
     
     # User past generated history - section
-    st.markdown('<div class="upload-section">', unsafe_allow_html=True)
+ #   st.markdown('<div class="upload-section">', unsafe_allow_html=True)
 
     if "df_extracted_data" not in st.session_state:
         with st.spinner("Loading DB..."):
@@ -554,12 +554,12 @@ def main():
  
         
 
-    st.markdown('<p class="user-history-title">User History</p>', unsafe_allow_html=True)
-    df_user_history = df_extracted_data.rename(columns={"user_id": "User ID", "generate_time": "Generate Time", "paper_title": "Paper Title", "paper_summary": "Paper Summary"})
-    user_history_columns = ["User ID", "Generate Time", "Paper Title", "Paper Summary"]
-    st.dataframe(df_user_history[user_history_columns])
+#    st.markdown('<p class="user-history-title">User History</p>', unsafe_allow_html=True)
+  #  df_user_history = df_extracted_data.rename(columns={"user_id": "User ID", "generate_time": "Generate Time", "paper_title": "Paper Title", "paper_summary": "Paper Summary"})
+ #   user_history_columns = ["User ID", "Generate Time", "Paper Title", "Paper Summary"]
+#    st.dataframe(df_user_history[user_history_columns])
             
-    st.markdown('</div>', unsafe_allow_html=True)
+ #   st.markdown('</div>', unsafe_allow_html=True)
 
 
 
