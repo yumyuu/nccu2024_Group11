@@ -1,0 +1,32 @@
+# 忽略虛擬環境
+venv/
+*.pyc
+__pycache__/
+
+# 忽略 node_modules 資料夾
+node_modules/
+
+# 忽略 log 文件
+*.log
+
+# 忽略暫存文件
+*.tmp
+*.temp
+*.swp
+
+# 忽略本地設定文件
+*.yaml
+
+# 忽略 PDF to Image 相關資料夾內容
+pdf_to_image/
+cropped_image_tool/uploads/
+
+# 忽略 public 資料夾中的靜態生成內容
+cropped_image_tool/public/
+
+# 忽略 npm 鎖檔案（如果需要保留鎖檔案可移除此行）
+cropped_image_tool/package-lock.json
+
+# 忽略其他可能的臨時文件
+.DS_Store
+Thumbs.db

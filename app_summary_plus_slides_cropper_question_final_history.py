@@ -69,21 +69,34 @@ def calculate_similarity(text1, text2):
         same_or_not = False
     return same_or_not,similarity
 
-def paper_similarity_checker(new_paper_text, extracted_data_from_db):   
+def paper_similarity_checker(new_paper_text, collection):   
     # Print the columns of the DataFrame for debugging
-    print("Columns in extracted_data_from_db:", extracted_data_from_db.columns.tolist())
+    # print("Columns in extracted_data_from_db:", extracted_data_from_db.columns.tolist())
     
-    for index, row in extracted_data_from_db.iterrows():
+    #for index, row in extracted_data_from_db.iterrows():
         # Check if 'paper_text' exists in the row
-        if 'paper_text' not in row:
-            print(f"Row {index} does not contain 'paper_text'. Available columns: {row.index.tolist()}")
-            continue  # Skip this iteration if 'paper_text' is missing
+        #if 'paper_text' not in row:
+        #    print(f"Row {index} does not contain 'paper_text'. Available columns: {row.index.tolist()}")
+        #    continue  # Skip this iteration if 'paper_text' is missing
         
-        paper_text = row['paper_text']
+        #paper_text = row['paper_text']
+        #same_or_not, similarity = calculate_similarity(new_paper_text, paper_text)
+        #print(f"與資料庫中的論文(paper_title: {row['paper_title']})相似度: {similarity}, 是否相似: {same_or_not}")
+        #if same_or_not:
+        #    return row['paper_title']
+    #return None
+        # 查詢資料庫中的所有論文文本
+    for document in collection.find({}, {"paper_title": 1, "paper_text": 1}):
+        paper_text = document["paper_text"]
+        paper_title = document["paper_title"]
+
+        # 計算相似度
         same_or_not, similarity = calculate_similarity(new_paper_text, paper_text)
-        print(f"與資料庫中的論文(paper_title: {row['paper_title']})相似度: {similarity}, 是否相似: {same_or_not}")
+        print(f"Checking similarity with '{paper_title}', Similarity: {similarity}")
+
         if same_or_not:
-            return row['paper_title']
+            return paper_title
+
     return None
  
 
@@ -651,27 +664,51 @@ def main():
         st.session_state["results"]["pdf_text"] = pdf_text
 
         # 透過 alculate_similarity 計算new paper 與 df 中的paper_text 論文相似度
-        paper_existed_in_db_or_not = paper_similarity_checker(new_paper_text=st.session_state["results"]["pdf_text"], extracted_data_from_db=df_extracted_data)
-        print("paper_existed_in_db_or_not", paper_existed_in_db_or_not)
-        if paper_existed_in_db_or_not != None:
+        #paper_existed_in_db_or_not = paper_similarity_checker(new_paper_text=st.session_state["results"]["pdf_text"], extracted_data_from_db=df_extracted_data)
+        #print("paper_existed_in_db_or_not", paper_existed_in_db_or_not)
+        # 連接到 MongoDB 的集合
+        file_collection = connect_to_mongodb(table_name="PaperHelper", collection_name="file", server_address=cloud_server_address)
+        paper_existed_in_db_or_not = paper_similarity_checker(new_paper_text=pdf_text, collection=file_collection)
+        if paper_existed_in_db_or_not:
+        # 找到相似論文，提取標題與摘要
             paper_title = paper_existed_in_db_or_not
+            document = file_collection.find_one({"paper_title": paper_title}, {"paper_summary": 1})
 
-            # 搜索符合條件的行，並提取 paper_summary 的內容
-            paper_summary_series = df_extracted_data [df_extracted_data['paper_title'] == paper_title]['paper_summary'].head(1)
+            if document:
+                paper_summary = document.get("paper_summary", "No summary found.")
+            else:
+                paper_summary = "No summary found."
 
-            # 如果找到匹配的行，提取文字，否則返回空字串
-            paper_summary = paper_summary_series.iloc[0] if not paper_summary_series.empty else "No summary found."
-
-            # 打印 paper_summary 的文字
-            print(paper_title, paper_summary)
-            # show it on the screen
+            # 顯示結果
             st.success("Paper already exists in the database")
-            if generate_insights_and_slides_button == False:
-                st.markdown(f'<div class="paper-title">Paper Title: {paper_title}</div>', unsafe_allow_html=True)
-                st.markdown(f'<div class="paper-summary">Summary: {paper_summary}</div>', unsafe_allow_html=True)
-            # Store results in session state
+            st.markdown(f'<div class="paper-title">Paper Title: {paper_title}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="paper-summary">Summary: {paper_summary}</div>', unsafe_allow_html=True)
+
+            # 存儲結果到 session_state
             st.session_state["results"]["paper_title"] = paper_title
             st.session_state["results"]["summary"] = paper_summary
+
+            # 中止後續摘要生成
+            return
+        #if paper_existed_in_db_or_not != None:
+        #    paper_title = paper_existed_in_db_or_not
+
+            # 搜索符合條件的行，並提取 paper_summary 的內容
+            #   paper_summary_series = df_extracted_data [df_extracted_data['paper_title'] == paper_title]['paper_summary'].head(1)
+
+            # 如果找到匹配的行，提取文字，否則返回空字串
+            # paper_summary = paper_summary_series.iloc[0] if not paper_summary_series.empty else "No summary found."
+
+            # 打印 paper_summary 的文字
+            # print(paper_title, paper_summary)
+            # show it on the screen
+            #st.success("Paper already exists in the database")
+            #if generate_insights_and_slides_button == False:
+            #    st.markdown(f'<div class="paper-title">Paper Title: {paper_title}</div>', unsafe_allow_html=True)
+            #    st.markdown(f'<div class="paper-summary">Summary: {paper_summary}</div>', unsafe_allow_html=True)
+            # Store results in session state
+            #st.session_state["results"]["paper_title"] = paper_title
+            #st.session_state["results"]["summary"] = paper_summary
 
 
 

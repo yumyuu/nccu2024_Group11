@@ -1,8 +1,0 @@
-mongodb_atlas_server_address: "mongodb+srv://113753204:113753204@paperhelper.che1z.mongodb.net/?retryWrites=true&w=majority&appName=PaperHelper"
-local_server_address: mongodb://localhost:27017/
-
-
-pdf_upload_path: "./cropped_image_tool/tmp"
-pdf_to_image_folder: "./cropped_image_tool/pdf_to_image"
-cropped_image_folder: "./cropped_image_tool/public/uploads"
-logout_page_url: "https://g11.papperhelper.xyz/logout"
