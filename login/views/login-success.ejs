@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Amazon Cognito Authentication</title>
+</head>
+
+<body>
+    <div>
+        <h1>Amazon Cognito User Pool Demo</h1>
+
+        <% if (isAuthenticated) { %>
+            <!-- 使用者已登入 -->
+            <div>
+                <h2>Welcome, <%= userInfo.username || userInfo.email %>
+                </h2>
+                <p>Here are some attributes you can use as a developer:</p>
+                <pre><%= JSON.stringify(userInfo, null, 4) %></pre>
+            </div>
+            <a href="/logout">Logout</a>
+            <% } else { %>
+                <!-- 使用者未登入 -->
+                <p>Please log in to continue</p>
+                <a href="/login">Login</a>
+                <% } %>
+    </div>
+</body>
+
+</html>
